@@ -235,6 +235,10 @@ http.listen(8000, function () {
           (trampolineX1 + trampolineX2) / 2,
           (trampolineY1 + trampolineY2) / 2,
           { width: trampolineLength, height: 5 },
+          trampolineAngle,
+          1,
+          1,
+          trampolineRestitution,
           false,
           true
         );
