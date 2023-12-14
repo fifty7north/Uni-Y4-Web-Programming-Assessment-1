@@ -53,7 +53,6 @@ function tick(e) {
     framerate = 240;
   }
   createjs.Ticker.framerate = framerate;
-  document.getElementById("fps").innerHTML = " fps " + framerate;
   stage.update(e);
 }
 
@@ -103,25 +102,65 @@ function handleComplete() {
         objs[i].rotation = data[i].r * R2D;
         stage.addChild(objs[objs.length - 1]);
       }
+      if (data[i].id == "goldHoop") {
+        objs.push(
+          makeBitmap(
+            loader.getResult("goldHoop"),
+            data[i].objwidth,
+            data[i].objheight
+          )
+        );
+        objs[i].x = data[i].x;
+        objs[i].y = data[i].y;
+        objs[i].rotation = data[i].r * R2D;
+        stage.addChild(objs[objs.length - 1]);
+      }
+      if (data[i].id == "silverHoop") {
+        objs.push(
+          makeBitmap(
+            loader.getResult("silverHoop"),
+            data[i].objwidth,
+            data[i].objheight
+          )
+        );
+        objs[i].x = data[i].x;
+        objs[i].y = data[i].y;
+        objs[i].rotation = data[i].r * R2D;
+        stage.addChild(objs[objs.length - 1]);
+      }
+      if (data[i].id == "bronzeHoop") {
+        objs.push(
+          makeBitmap(
+            loader.getResult("bronzeHoop"),
+            data[i].objwidth,
+            data[i].objheight
+          )
+        );
+        objs[i].x = data[i].x;
+        objs[i].y = data[i].y;
+        objs[i].rotation = data[i].r * R2D;
+        stage.addChild(objs[objs.length - 1]);
+      }
     }
     const now = performance.now();
     while (datastamps.length > 0 && datastamps[0] <= now - 1000) {
       datastamps.shift();
     }
     datastamps.push(now);
-    document.getElementById("datarate").innerHTML =
-      " datarate " + datastamps.length;
     initialised = true;
   });
 }
-
-init();
 
 $("canvas").mousedown(function (e) {
   socket.emit("mousedown", e.clientX, e.clientY);
 });
 $("canvas").mouseup(function (e) {
   socket.emit("mouseup", e.clientX, e.clientY);
+});
+
+socket.on("playerCount", (playerCount) => {
+  document.getElementById("playersConnected").innerHTML =
+    "Players: " + playerCount;
 });
 
 /**

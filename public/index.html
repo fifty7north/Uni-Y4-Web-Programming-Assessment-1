@@ -1,17 +1,64 @@
 <!DOCTYPE html>
 <head>
-    <link rel="stylesheet" type="text/css" href="css/style.css">
-    <script src="/socket.io/socket.io.js"></script>
-    <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
-    <script src="https://code.createjs.com/1.0.0/easeljs.min.js"></script>
-    <script src="https://code.createjs.com/1.0.0/preloadjs.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="css/style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
+  <script src="/socket.io/socket.io.js"></script>
+  <script
+    src="https://code.jquery.com/jquery-3.7.1.js"
+    integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
+    crossorigin="anonymous"
+  ></script>
+  <script src="https://code.createjs.com/1.0.0/easeljs.min.js"></script>
+  <script src="https://code.createjs.com/1.0.0/preloadjs.min.js"></script>
 </head>
 <body>
-    <h1>Test B2D Server with Easel
-        <span id="datarate"></span>
-        <span id="fps"></span>
-    </h1>
-    <canvas id="easelcan" width="1200" height="800"></canvas>
+  <div class="utilities">
+    <p id="playersConnected">Players: 0</p>
+    <p id="score">Score: 0</p>
+    <p id="lives">Lives: 3</p>
+    <div class="utilityButtons">
+      <button onclick="togglePlay()" id="music">♫</button>
+      <button onclick="menuWindow(); stop();" id="home">X</button>
+    </div>
+  </div>
+  <div class="gameWindow" id="splash">
+    <h1>Skydivers</h1>
+    <div class="menuButtons">
+      <button onclick="playWindow(); init();" id="playButton">Play</button>
+    </div>
+  </div>
+  <canvas id="easelcan" width="1200" height="800"></canvas>
 </body>
 <script src="./js/main.js"></script>
-</html>
+<script>
+  function playWindow() {
+    document.getElementById("splash").style.display = "none";
+    document.getElementById("easelcan").style.display = "block";
+  }
+</script>
+<script type="text/javascript" src="./js/beepbox_synth.js"></script>
+<script type="text/javascript">
+  var synth = new beepbox.Synth(
+    "9n41s6k1l00e0ft1Ka7g0fj07r3i0o4444T0v1u10f0qg01d04w2h0E0T1v1u16f0q00d03A0F0B0Q0000Pff00E1617T0v1u13f10o5q00d03w5h1E0T1v3ud0f10t5q011d23A0F3B7Q0201Pf431E26327jT2v3u15f10w4qw02d03w0E0b4x8i000id3g0018Q001mu18i4w0i4w00000000004x8h4h4yd14y9gp29YKqDGgPCngo0ndvEHsq-YgbrN0JL3_JzGXoWKEzvSGFG8TWwdV6PhWoRCm3IReIf23UygcR-2gig_AB_xyQjhjhd4tdkhQRpyRlhjh897ll4uiSNyQPhjpmAtcQhRrh7hl4tcQhRlh7hd2QjgEmq_GkAMIQvDVtSXnunu0I42MpB7h2Lwi-ntCRTDc6rJtQRfiNdvNAknnFE-s1MwjbPjjTlKPNf4shoPkYrPfa3CLY73IOWgXNysCsVwEDNi88HLJdwUiocKY1_rKTuIvJ17UPo0vyXLZCR__8-9BCzYRCFXKPpvKJi86q_GWi7wlwViocKY1odKXdXlJPuf-17U8lU9tCWvPqptM0J0J50J550J0J5544bgbhgbh8k2Q2QkkqwJ0J50J550J0J554abgbhgbh8k2Q2QkkkR_GijhWejB4uihMs3Gkpujpjyml8xsOVbqgNq9EFECyeCG8WqMNqGEFEA4zGGyf9roNqpEFIHieCq8WJEzEGyeCq8WGEzECxq9Ek2CkUbgb0QyQkk2QkQyQk2Q2QQyQkk2QkQyQkQp0zjaioKjABeihV9yVeikYAhV9yVeikVd6ioKjABf94uioKjADgQ4t794uioKjABejhAyV8Kgbhjjhi0"
+  );
+  function togglePlay() {
+    if (synth.isPlayingSong) {
+      synth.pause();
+      synth.snapToStart();
+    } else {
+      synth.play();
+    }
+  }
+  function beepboxPlay() {
+    synth.play();
+  }
+  function beepboxPause() {
+    synth.pause();
+    synth.snapToStart();
+  }
+</script>

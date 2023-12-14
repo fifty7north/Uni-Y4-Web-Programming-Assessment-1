@@ -24,7 +24,7 @@ let world;
 const SCALE = 30;
 const WIDTH = 1200;
 const HEIGHT = 800;
-const SIZE = 50;
+const OFFSET = 90;
 let fps = 65;
 let interval;
 
@@ -142,35 +142,80 @@ function init() {
     true
   );
 
-  createAnObject(
-    "diver",
-    Math.random() * (WIDTH - SIZE),
-    Math.random() * (HEIGHT - SIZE),
-    { radius: 30 },
-    0,
-    1,
-    1,
-    1,
-    true,
-    false
-  );
-  createAnObject(
-    "diver",
-    Math.random() * (WIDTH - SIZE),
-    Math.random() * (HEIGHT - SIZE),
-    { radius: 30 },
-    0,
-    1,
-    1,
-    1,
-    true,
-    false
-  );
+  spawnDiver();
+  spawnHoop();
 
   interval = setInterval(() => {
     update();
   }, 1000 / fps);
   update();
+}
+
+/**
+ * Object spawn functions
+ */
+
+function spawnDiver() {
+  createAnObject(
+    "diver",
+    Math.random() * WIDTH - 25,
+    Math.random() * HEIGHT - 25 + OFFSET,
+    { radius: 25 },
+    0,
+    1,
+    1,
+    1,
+    true,
+    false
+  );
+}
+
+function spawnHoop() {
+  var hoopAngle = Math.floor(Math.random() * 2) * 90 * (Math.PI / 180);
+  var hoopSpawnChance = Math.floor(Math.random() * 100) + 1;
+  if (hoopSpawnChance > 85) {
+    //15% chance for gold hoop, small length big points
+    createAnObject(
+      "goldHoop",
+      Math.random() * (WIDTH - 50),
+      Math.random() * (HEIGHT / 2 - 50) - OFFSET,
+      { width: 50, height: 10 },
+      0,
+      1,
+      1,
+      1,
+      false,
+      true
+    );
+  } else if (hoopSpawnChance > 50) {
+    //35% chance for silver hoop, mid length mid points
+    createAnObject(
+      "silverHoop",
+      Math.random() * (WIDTH - 75),
+      Math.random() * (HEIGHT / 2 - 75) - OFFSET,
+      { width: 75, height: 10 },
+      0,
+      1,
+      1,
+      1,
+      false,
+      true
+    );
+  } else {
+    //50% chance for bronze hoop, big length small points
+    createAnObject(
+      "bronzeHoop",
+      Math.random() * (WIDTH - 100),
+      Math.random() * (HEIGHT / 2 - 100) - OFFSET,
+      { width: 100, height: 10 },
+      0,
+      1,
+      1,
+      1,
+      false,
+      true
+    );
+  }
 }
 
 app.use(express.static("public"));
@@ -181,7 +226,17 @@ app.use("/assets", express.static(__dirname + "public/assets"));
 http.listen(8000, function () {
   console.log("server up on * 8000");
   io.on("connection", function (socket) {
+    //Live player count
     connections.push(socket);
+    socket.emit("playerCount", connections.length);
+
+    socket.on("disconnect", () => {
+      connections.pop();
+      socket.emit("playerCount", connections.length);
+    });
+    setInterval(() => {
+      socket.emit("playerCount", connections.length);
+    }, 1000);
 
     // * Mouse controls
     var drawTrampoline = false; //used to draw trampoline when set to true
@@ -217,19 +272,49 @@ http.listen(8000, function () {
         //Sets restitution value to be determined by y coords, the further the trampoline is up the canvas the less restitution it has
         var trampolineRestitution = (trampolineY1 + trampolineY2) / 1600 + 0.25;
 
-        //
-        createAnObject(
-          "trampoline",
-          (trampolineX1 + trampolineX2) / 2,
-          (trampolineY1 + trampolineY2) / 2,
-          { width: trampolineLength / 2, height: 5 },
-          trampolineAngle,
-          1,
-          1,
-          trampolineRestitution,
-          false,
-          true
-        );
+        if (trampolineLength > 500) {
+          trampolineLength = 500;
+          if (trampolineX1 < trampolineX2) {
+            createAnObject(
+              "trampoline",
+              (trampolineX1 + trampolineX2) / 2,
+              (trampolineY1 + trampolineY2) / 2,
+              { width: trampolineLength / 2, height: 10 },
+              trampolineAngle,
+              1,
+              1,
+              trampolineRestitution,
+              false,
+              true
+            );
+          } else if (trampolineX1 < trampolineX2) {
+            createAnObject(
+              "trampoline",
+              (trampolineX1 + trampolineX2) / 2,
+              (trampolineY1 + trampolineY2) / 2,
+              { width: trampolineLength / 2, height: 10 },
+              trampolineAngle,
+              1,
+              1,
+              trampolineRestitution,
+              false,
+              true
+            );
+          }
+        } else {
+          createAnObject(
+            "trampoline",
+            (trampolineX1 + trampolineX2) / 2,
+            (trampolineY1 + trampolineY2) / 2 - OFFSET,
+            { width: trampolineLength / 2, height: 10 },
+            trampolineAngle,
+            1,
+            1,
+            trampolineRestitution,
+            false,
+            true
+          );
+        }
       } else {
         //If mouse released in top half on canvas or unknown error occurs, messages console
         drawTrampoline = false;
