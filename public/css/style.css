@@ -1,0 +1,21 @@
+body,
+div {
+  border: none;
+  color: skyblue;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: aliceblue;
+  border: 1px solid black;
+  height: 800px;
+  width: 1200px;
+}
+
+div {
+  background-color: black;
+  left: 0;
+  position: absolute;
+  top: 0;
+}
