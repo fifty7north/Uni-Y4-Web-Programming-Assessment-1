@@ -73,43 +73,23 @@ function handleComplete() {
 
   let initialised = false;
   socket.on("objdata", function (data) {
+    console.log(data);
     for (let i in data) {
-      if (!initialised && data[i].id == "border") {
+      if (!initialised && data[i].id == "diver") {
         objs.push(
           makeBitmap(
-            loader.getResult("trampoline"),
-            data[i].objwidth,
-            data[i].objheight
+            loader.getResult("diver"),
+            data[i].objwidth / 2,
+            data[i].objheight / 2
           )
         );
         stage.addChild(objs[objs.length - 1]);
       }
-      if (!initialised && data[i].id == "rand") {
-        if (data[i].iscircle) {
-          objs.push(
-            makeBitmap(
-              loader.getResult("diver"),
-              data[i].objwidth / 2,
-              data[i].objheight / 2
-            )
-          );
-        } else {
-          objs.push(
-            makeBitmap(
-              loader.getResult("goldHoop"),
-              data[i].objwidth,
-              data[i].objheight
-            )
-          );
-        }
-        stage.addChild(objs[objs.length - 1]);
-      }
-      if (data[i].id == "rand") {
+      if (data[i].id == "diver") {
         objs[i].x = data[i].x;
         objs[i].y = data[i].y;
         objs[i].rotation = data[i].r * R2D;
       }
-
       if (data[i].id == "trampoline") {
         objs.push(
           makeBitmap(
@@ -118,10 +98,12 @@ function handleComplete() {
             data[i].objheight
           )
         );
+        objs[i].x = data[i].x;
+        objs[i].y = data[i].y;
+        objs[i].rotation = data[i].r * R2D;
         stage.addChild(objs[objs.length - 1]);
       }
     }
-
     const now = performance.now();
     while (datastamps.length > 0 && datastamps[0] <= now - 1000) {
       datastamps.shift();

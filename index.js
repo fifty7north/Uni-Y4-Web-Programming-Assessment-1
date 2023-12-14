@@ -108,18 +108,6 @@ function init() {
   createAnObject(
     "border",
     0,
-    0,
-    { width: WIDTH, height: 5 },
-    0,
-    1,
-    1,
-    1,
-    false,
-    true
-  );
-  createAnObject(
-    "border",
-    0,
     HEIGHT,
     { width: WIDTH, height: 5 },
     0,
@@ -133,7 +121,7 @@ function init() {
     "border",
     0,
     0,
-    { width: 5, height: HEIGHT },
+    { width: 5, height: HEIGHT * 10 },
     0,
     1,
     1,
@@ -145,7 +133,7 @@ function init() {
     "border",
     WIDTH,
     0,
-    { width: 5, height: HEIGHT },
+    { width: 5, height: HEIGHT * 10 },
     0,
     1,
     1,
@@ -155,7 +143,7 @@ function init() {
   );
 
   createAnObject(
-    "rand",
+    "diver",
     Math.random() * (WIDTH - SIZE),
     Math.random() * (HEIGHT - SIZE),
     { radius: 30 },
@@ -167,7 +155,7 @@ function init() {
     false
   );
   createAnObject(
-    "rand",
+    "diver",
     Math.random() * (WIDTH - SIZE),
     Math.random() * (HEIGHT - SIZE),
     { radius: 30 },
@@ -234,7 +222,7 @@ http.listen(8000, function () {
           "trampoline",
           (trampolineX1 + trampolineX2) / 2,
           (trampolineY1 + trampolineY2) / 2,
-          { width: trampolineLength, height: 5 },
+          { width: trampolineLength / 2, height: 5 },
           trampolineAngle,
           1,
           1,
