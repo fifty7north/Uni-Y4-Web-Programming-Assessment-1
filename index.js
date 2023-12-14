@@ -30,6 +30,9 @@ const OFFSET = 90;
 let fps = 65;
 let interval;
 
+var score = 0;
+var lives = 3;
+
 function createAnObject(
   objid,
   x,
@@ -102,10 +105,26 @@ function drawDOMObjects() {
  *
  */
 
+var respawnDiver, respawnHoop;
+
 function update() {
   world.Step(1 / fps, 10, 10);
-
   io.sockets.emit("objdata", drawDOMObjects());
+
+  //Create things
+  if (respawnDiver == true) {
+    spawnDiver();
+    respawnDiver = false;
+  }
+  if (respawnHoop == true) {
+    spawnHoop();
+    respawnHoop = false;
+  }
+
+  //Destroy things
+  for (var i in destroylist) {
+    world.DestroyBody(destroylist[i]);
+  }
   world.ClearForces();
 }
 
@@ -152,22 +171,78 @@ function init() {
 
   spawnDiver();
   spawnHoop();
+  spawnHoop();
 
   interval = setInterval(() => {
     update();
   }, 1000 / fps);
   update();
 
+  /**
+   * Destroy objects
+   */
+
   var destroyListener = new Box2D.Dynamics.b2ContactListener();
   destroyListener.BeginContact = function (contact) {
     var fixa = contact.GetFixtureA().GetBody().GetUserData().id;
     var fixb = contact.GetFixtureB().GetBody().GetUserData().id;
-    console.log("fixA: " + fixa + " fixB: " + fixb);
-    if (
-      (fixa == "diver" && fixb == "ground") ||
-      (fixa == "ground" && fixb == "diver")
-    ) {
-      console.log("ground");
+
+    //Diver hits ground
+    if (fixa == "diver" && fixb == "ground") {
+      destroylist.push(contact.GetFixtureA().GetBody());
+      respawnDiver = true;
+      lives--;
+      //socket.emit("updateLives", lives);
+    }
+    if (fixb == "diver" && fixa == "ground") {
+      destroylist.push(contact.GetFixtureB().GetBody());
+      respawnDiver = true;
+      lives--;
+      //socket.emit("updateLives", lives);
+    }
+
+    //Diver hits trampoline
+    if (fixa == "trampoline" && fixb == "diver") {
+      destroylist.push(contact.GetFixtureA().GetBody());
+    }
+    if (fixb == "trampoline" && fixa == "diver") {
+      destroylist.push(contact.GetFixtureB().GetBody());
+    }
+
+    //Diver hits gold hoop
+    if (fixa == "goldHoop" && fixb == "diver") {
+      destroylist.push(contact.GetFixtureA().GetBody());
+      respawnHoop = true;
+      score = score + 5;
+    }
+    if (fixb == "goldHoop" && fixa == "diver") {
+      destroylist.push(contact.GetFixtureB().GetBody());
+      respawnHoop = true;
+      score = score + 5;
+    }
+
+    //Diver hits silver hoop
+    if (fixa == "silverHoop" && fixb == "diver") {
+      destroylist.push(contact.GetFixtureA().GetBody());
+      respawnHoop = true;
+      score = score + 3;
+    }
+    if (fixb == "silverHoop" && fixa == "diver") {
+      destroylist.push(contact.GetFixtureB().GetBody());
+      respawnHoop = true;
+      score = score + 3;
+    }
+
+    //Diver hits bronze hoop
+    if (fixa == "bronzeHoop" && fixb == "diver") {
+      destroylist.push(contact.GetFixtureA().GetBody());
+      respawnHoop = true;
+      score = score + 1;
+    }
+    if (fixb == "bronzeHoop" && fixa == "diver") {
+      destroylist.push(contact.GetFixtureB().GetBody());
+      respawnHoop = true;
+      score = score + 1;
     }
   };
   world.SetContactListener(destroyListener);
@@ -200,7 +275,7 @@ function spawnHoop() {
     createAnObject(
       "goldHoop",
       Math.random() * (WIDTH - 50),
-      Math.random() * (HEIGHT / 2 - 50) - OFFSET,
+      Math.random() * (HEIGHT / 2 - 50),
       { width: 50, height: 10 },
       hoopAngle,
       1,
@@ -214,7 +289,7 @@ function spawnHoop() {
     createAnObject(
       "silverHoop",
       Math.random() * (WIDTH - 75),
-      Math.random() * (HEIGHT / 2 - 75) - OFFSET,
+      Math.random() * (HEIGHT / 2 - 75),
       { width: 75, height: 10 },
       hoopAngle,
       1,
@@ -228,7 +303,7 @@ function spawnHoop() {
     createAnObject(
       "bronzeHoop",
       Math.random() * (WIDTH - 100),
-      Math.random() * (HEIGHT / 2 - 100) - OFFSET,
+      Math.random() * (HEIGHT / 2 - 100),
       { width: 100, height: 10 },
       hoopAngle,
       1,
