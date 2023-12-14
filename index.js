@@ -42,6 +42,7 @@ function createAnObject(
   density,
   friction,
   restitution,
+  collisionGroup,
   issensor,
   iscircle,
   isstatic
@@ -57,6 +58,7 @@ function createAnObject(
   fixDef.friction = friction;
   fixDef.restitution = restitution;
   fixDef.isSensor = issensor;
+  fixDef.filter.groupIndex = collisionGroup;
   let width, height;
   if (iscircle) {
     fixDef.shape = new b2CircleShape(dims.radius / SCALE);
@@ -160,6 +162,7 @@ function init() {
     1,
     1,
     1,
+    "collisionGroupBorder",
     false,
     false,
     true
@@ -173,6 +176,7 @@ function init() {
     1,
     1,
     1,
+    "collisionGroupBorder",
     false,
     false,
     true
@@ -186,6 +190,7 @@ function init() {
     1,
     1,
     1,
+    "collisionGroupBorder",
     false,
     false,
     true
@@ -284,6 +289,7 @@ function spawnDiver() {
     1,
     1,
     1,
+    "collisionGroupDiver",
     false,
     true,
     false
@@ -304,6 +310,7 @@ function spawnHoop() {
       1,
       1,
       1,
+      "collisionGroupHoop",
       true,
       false,
       true
@@ -319,6 +326,7 @@ function spawnHoop() {
       1,
       1,
       1,
+      "collisionGroupHoop",
       true,
       false,
       true
@@ -334,6 +342,7 @@ function spawnHoop() {
       1,
       1,
       1,
+      "collisionGroupHoop",
       true,
       false,
       true
@@ -411,6 +420,7 @@ http.listen(8000, function () {
               1,
               1,
               trampolineRestitution,
+              "collisionGroupTrampoline",
               false,
               false,
               true
@@ -425,6 +435,7 @@ http.listen(8000, function () {
               1,
               1,
               trampolineRestitution,
+              "collisionGroupTrampoline",
               false,
               false,
               true
@@ -440,6 +451,7 @@ http.listen(8000, function () {
             1,
             1,
             trampolineRestitution,
+            "collisionGroupTrampoline",
             false,
             false,
             true
