@@ -42,6 +42,7 @@ function createAnObject(
   density,
   friction,
   restitution,
+  issensor,
   iscircle,
   isstatic
 ) {
@@ -55,6 +56,7 @@ function createAnObject(
   fixDef.density = density;
   fixDef.friction = friction;
   fixDef.restitution = restitution;
+  fixDef.isSensor = issensor;
   let width, height;
   if (iscircle) {
     fixDef.shape = new b2CircleShape(dims.radius / SCALE);
@@ -106,6 +108,9 @@ function drawDOMObjects() {
  */
 
 var respawnDiver, respawnHoop;
+var difficulty1 = true;
+var difficulty2 = true;
+var difficulty3 = true;
 
 function update() {
   world.Step(1 / fps, 10, 10);
@@ -119,6 +124,20 @@ function update() {
   if (respawnHoop == true) {
     spawnHoop();
     respawnHoop = false;
+  }
+  if (score >= 20 && difficulty1 == true) {
+    spawnDiver();
+    spawnHoop();
+    difficulty1 = false;
+  }
+  if (score >= 50 && difficulty2 == true) {
+    spawnDiver();
+    spawnHoop();
+    difficulty2 = false;
+  }
+  if (score >= 100 && difficulty3 == true) {
+    spawnDiver();
+    difficulty3 = false;
   }
 
   //Destroy things
@@ -142,6 +161,7 @@ function init() {
     1,
     1,
     false,
+    false,
     true
   );
   createAnObject(
@@ -154,6 +174,7 @@ function init() {
     1,
     1,
     false,
+    false,
     true
   );
   createAnObject(
@@ -165,6 +186,7 @@ function init() {
     1,
     1,
     1,
+    false,
     false,
     true
   );
@@ -262,6 +284,7 @@ function spawnDiver() {
     1,
     1,
     1,
+    false,
     true,
     false
   );
@@ -281,6 +304,7 @@ function spawnHoop() {
       1,
       1,
       1,
+      true,
       false,
       true
     );
@@ -295,6 +319,7 @@ function spawnHoop() {
       1,
       1,
       1,
+      true,
       false,
       true
     );
@@ -309,6 +334,7 @@ function spawnHoop() {
       1,
       1,
       1,
+      true,
       false,
       true
     );
@@ -386,6 +412,7 @@ http.listen(8000, function () {
               1,
               trampolineRestitution,
               false,
+              false,
               true
             );
           } else if (trampolineX1 > trampolineX2) {
@@ -398,6 +425,7 @@ http.listen(8000, function () {
               1,
               1,
               trampolineRestitution,
+              false,
               false,
               true
             );
@@ -412,6 +440,7 @@ http.listen(8000, function () {
             1,
             1,
             trampolineRestitution,
+            false,
             false,
             true
           );
