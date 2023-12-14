@@ -19,6 +19,8 @@ let b2DebugDraw = Box2D.Dynamics.b2DebugDraw;
 let b2MouseJointDef = Box2D.Dynamics.Joints.b2MouseJointDef;
 let b2EdgeShape = Box2D.Collision.Shapes.b2EdgeShape;
 
+const destroylist = []; // Empty List at start
+
 let connections = [];
 let world;
 const SCALE = 30;
@@ -45,6 +47,7 @@ function createAnObject(
   bodyDef.position.x = x / SCALE;
   bodyDef.position.y = y / SCALE;
   bodyDef.angle = angle;
+  bodyDef.fixedRotation = true;
   let fixDef = new b2FixtureDef();
   fixDef.density = density;
   fixDef.friction = friction;
@@ -95,6 +98,10 @@ function drawDOMObjects() {
   return ret;
 }
 
+/**
+ *
+ */
+
 function update() {
   world.Step(1 / fps, 10, 10);
 
@@ -105,8 +112,9 @@ function update() {
 function init() {
   world = new b2World(new b2Vec2(0, 9.81), true);
 
+  //Create canvas borders
   createAnObject(
-    "border",
+    "ground",
     0,
     HEIGHT,
     { width: WIDTH, height: 5 },
@@ -149,6 +157,20 @@ function init() {
     update();
   }, 1000 / fps);
   update();
+
+  var destroyListener = new Box2D.Dynamics.b2ContactListener();
+  destroyListener.BeginContact = function (contact) {
+    var fixa = contact.GetFixtureA().GetBody().GetUserData().id;
+    var fixb = contact.GetFixtureB().GetBody().GetUserData().id;
+    console.log("fixA: " + fixa + " fixB: " + fixb);
+    if (
+      (fixa == "diver" && fixb == "ground") ||
+      (fixa == "ground" && fixb == "diver")
+    ) {
+      console.log("ground");
+    }
+  };
+  world.SetContactListener(destroyListener);
 }
 
 /**
@@ -159,8 +181,8 @@ function spawnDiver() {
   createAnObject(
     "diver",
     Math.random() * WIDTH - 25,
-    Math.random() * HEIGHT - 25 + OFFSET,
-    { radius: 25 },
+    0,
+    { radius: 15 },
     0,
     1,
     1,
@@ -180,7 +202,7 @@ function spawnHoop() {
       Math.random() * (WIDTH - 50),
       Math.random() * (HEIGHT / 2 - 50) - OFFSET,
       { width: 50, height: 10 },
-      0,
+      hoopAngle,
       1,
       1,
       1,
@@ -194,7 +216,7 @@ function spawnHoop() {
       Math.random() * (WIDTH - 75),
       Math.random() * (HEIGHT / 2 - 75) - OFFSET,
       { width: 75, height: 10 },
-      0,
+      hoopAngle,
       1,
       1,
       1,
@@ -208,7 +230,7 @@ function spawnHoop() {
       Math.random() * (WIDTH - 100),
       Math.random() * (HEIGHT / 2 - 100) - OFFSET,
       { width: 100, height: 10 },
-      0,
+      hoopAngle,
       1,
       1,
       1,
@@ -217,6 +239,10 @@ function spawnHoop() {
     );
   }
 }
+
+/**
+ *
+ */
 
 app.use(express.static("public"));
 app.use("/js", express.static(__dirname + "public/js"));
@@ -277,7 +303,7 @@ http.listen(8000, function () {
           if (trampolineX1 < trampolineX2) {
             createAnObject(
               "trampoline",
-              (trampolineX1 + trampolineX2) / 2,
+              (trampolineX1 + trampolineX2) / 2 - 250,
               (trampolineY1 + trampolineY2) / 2,
               { width: trampolineLength / 2, height: 10 },
               trampolineAngle,
@@ -287,10 +313,10 @@ http.listen(8000, function () {
               false,
               true
             );
-          } else if (trampolineX1 < trampolineX2) {
+          } else if (trampolineX1 > trampolineX2) {
             createAnObject(
               "trampoline",
-              (trampolineX1 + trampolineX2) / 2,
+              (trampolineX1 + trampolineX2) / 2 + 250,
               (trampolineY1 + trampolineY2) / 2,
               { width: trampolineLength / 2, height: 10 },
               trampolineAngle,

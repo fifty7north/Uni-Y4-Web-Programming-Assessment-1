@@ -72,14 +72,13 @@ function handleComplete() {
 
   let initialised = false;
   socket.on("objdata", function (data) {
-    console.log(data);
     for (let i in data) {
       if (!initialised && data[i].id == "diver") {
         objs.push(
           makeBitmap(
             loader.getResult("diver"),
-            data[i].objwidth / 2,
-            data[i].objheight / 2
+            data[i].objwidth,
+            data[i].objheight
           )
         );
         stage.addChild(objs[objs.length - 1]);
