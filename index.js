@@ -164,53 +164,7 @@ function update() {
 function init() {
   world = new b2World(new b2Vec2(0, 9.81), true);
 
-  //Create canvas borders
-  createAnObject(
-    "ground",
-    0,
-    HEIGHT,
-    { width: WIDTH, height: 5 },
-    0,
-    1,
-    1,
-    1,
-    "collisionGroupBorder",
-    false,
-    false,
-    true
-  );
-  createAnObject(
-    "border",
-    0,
-    0,
-    { width: 5, height: HEIGHT * 10 },
-    0,
-    1,
-    1,
-    1,
-    "collisionGroupBorder",
-    false,
-    false,
-    true
-  );
-  createAnObject(
-    "border",
-    WIDTH,
-    0,
-    { width: 5, height: HEIGHT * 10 },
-    0,
-    1,
-    1,
-    1,
-    "collisionGroupBorder",
-    false,
-    false,
-    true
-  );
-
-  spawnDiver();
-  spawnHoop();
-  spawnHoop();
+  startGame();
 
   interval = setInterval(() => {
     update();
@@ -297,6 +251,59 @@ function init() {
 /**
  * Object spawn functions
  */
+
+function startGame() {
+  createAnObject(
+    "ground",
+    0,
+    HEIGHT,
+    { width: WIDTH, height: 5 },
+    0,
+    1,
+    1,
+    1,
+    "collisionGroupBorder",
+    false,
+    false,
+    true
+  );
+  createAnObject(
+    "border",
+    0,
+    0,
+    { width: 5, height: HEIGHT * 10 },
+    0,
+    1,
+    1,
+    1,
+    "collisionGroupBorder",
+    false,
+    false,
+    true
+  );
+  createAnObject(
+    "border",
+    WIDTH,
+    0,
+    { width: 5, height: HEIGHT * 10 },
+    0,
+    1,
+    1,
+    1,
+    "collisionGroupBorder",
+    false,
+    false,
+    true
+  );
+  spawnDiver();
+  spawnHoop();
+  spawnHoop();
+
+  difficulty1 = true;
+  difficulty2 = true;
+  difficulty3 = true;
+  gameOverCheck = true;
+}
 
 function spawnDiver() {
   createAnObject(
@@ -391,6 +398,17 @@ http.listen(8000, function () {
       playersReady++;
       if (playersReady == connections.length) {
         init();
+      } else {
+        console.log(
+          "Waiting on " + (connections.length - playersReady) + " players"
+        );
+      }
+    });
+
+    socket.on("restartGame", () => {
+      playersReady++;
+      if (playersReady == connections.length) {
+        startGame();
       } else {
         console.log(
           "Waiting on " + (connections.length - playersReady) + " players"

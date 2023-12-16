@@ -72,7 +72,6 @@ function handleComplete() {
 
   let initialised = false;
   socket.on("objdata", function (data) {
-    console.log(data);
     for (let i in data) {
       if (!initialised && data[i].id == "diver") {
         objs.push(
@@ -193,7 +192,15 @@ socket.on("endGame", (score) => {
   document.getElementById("gameOver").style.display = "block";
   document.getElementById("finalScoreDisplay").innerHTML =
     "You Scored " + score + " points";
+  document.getElementById("lives").innerHTML = "Lives: 3";
+  document.getElementById("score").innerHTML = "Score: 0";
 });
+
+function restartGame() {
+  document.getElementById("easelcan").style.display = "block";
+  document.getElementById("gameOver").style.display = "none";
+  socket.emit("restartGame");
+}
 
 /**
  * Easel Helper Functions
