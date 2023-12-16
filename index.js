@@ -113,12 +113,24 @@ var respawnDiver, respawnHoop;
 var difficulty1 = true;
 var difficulty2 = true;
 var difficulty3 = true;
+var gameOverCheck = true;
 
 function update() {
   world.Step(1 / fps, 10, 10);
   io.sockets.emit("objdata", drawDOMObjects());
 
-  //Create things
+  //Check things
+  if (lives == 0 && gameOverCheck == true) {
+    gameOverCheck = false;
+    for (let b = world.GetBodyList(); b; b = b.GetNext()) {
+      destroylist.push(b);
+    }
+    io.emit("endGame", score);
+    playersReady = 0;
+    lives = 3;
+    score = 0;
+  }
+
   if (respawnDiver == true) {
     spawnDiver();
     respawnDiver = false;

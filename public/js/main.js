@@ -72,6 +72,7 @@ function handleComplete() {
 
   let initialised = false;
   socket.on("objdata", function (data) {
+    console.log(data);
     for (let i in data) {
       if (!initialised && data[i].id == "diver") {
         objs.push(
@@ -182,6 +183,17 @@ function playWindow() {
   document.getElementById("splash").style.display = "none";
   document.getElementById("easelcan").style.display = "block";
 }
+
+/**
+ * End game loop
+ */
+
+socket.on("endGame", (score) => {
+  document.getElementById("easelcan").style.display = "none";
+  document.getElementById("gameOver").style.display = "block";
+  document.getElementById("finalScoreDisplay").innerHTML =
+    "You Scored " + score + " points";
+});
 
 /**
  * Easel Helper Functions
