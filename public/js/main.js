@@ -1,6 +1,10 @@
 "use strict";
 let socket = io();
 
+var gameOverSFX = new Audio("./assets/game_over_SFX.mp3");
+var diverSFX = new Audio("./assets/diver_SFX.mp3");
+var hoopSFX = new Audio("./assets/hoop_SFX.mp3");
+
 /**
  * EaselJS Globals
  */
@@ -164,10 +168,16 @@ socket.on("playerCount", (playerCount) => {
 
 socket.on("livesUpdate", (lives) => {
   document.getElementById("lives").innerHTML = "Lives: " + lives;
+  if (lives > 0) {
+    diverSFX.play();
+  } else {
+    gameOverSFX.play();
+  }
 });
 
 socket.on("scoreUpdate", (score) => {
   document.getElementById("score").innerHTML = "Score: " + score;
+  hoopSFX.play();
 });
 
 /**
