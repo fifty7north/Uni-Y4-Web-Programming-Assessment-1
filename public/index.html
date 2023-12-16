@@ -29,18 +29,14 @@
   <div class="gameWindow" id="splash">
     <h1>Skydivers</h1>
     <div class="menuButtons">
-      <button onclick="playWindow(); init();" id="playButton">Play</button>
+      <button onclick="playWindow(); startGame(); init()" id="playButton">
+        Play
+      </button>
     </div>
   </div>
   <canvas id="easelcan" width="1200" height="800"></canvas>
 </body>
 <script src="./js/main.js"></script>
-<script>
-  function playWindow() {
-    document.getElementById("splash").style.display = "none";
-    document.getElementById("easelcan").style.display = "block";
-  }
-</script>
 <script type="text/javascript" src="./js/beepbox_synth.js"></script>
 <script type="text/javascript">
   var synth = new beepbox.Synth(

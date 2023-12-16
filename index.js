@@ -225,6 +225,7 @@ function init() {
       destroylist.push(contact.GetFixtureB().GetBody());
       respawnDiver = true;
       lives--;
+      io.emit("livesUpdate", lives);
       //socket.emit("updateLives", lives);
     }
 
@@ -241,11 +242,13 @@ function init() {
       destroylist.push(contact.GetFixtureA().GetBody());
       respawnHoop = true;
       score = score + 5;
+      io.emit("scoreUpdate", score);
     }
     if (fixb == "goldHoop" && fixa == "diver") {
       destroylist.push(contact.GetFixtureB().GetBody());
       respawnHoop = true;
       score = score + 5;
+      io.emit("scoreUpdate", score);
     }
 
     //Diver hits silver hoop
@@ -253,11 +256,13 @@ function init() {
       destroylist.push(contact.GetFixtureA().GetBody());
       respawnHoop = true;
       score = score + 3;
+      io.emit("scoreUpdate", score);
     }
     if (fixb == "silverHoop" && fixa == "diver") {
       destroylist.push(contact.GetFixtureB().GetBody());
       respawnHoop = true;
       score = score + 3;
+      io.emit("scoreUpdate", score);
     }
 
     //Diver hits bronze hoop
@@ -265,11 +270,13 @@ function init() {
       destroylist.push(contact.GetFixtureA().GetBody());
       respawnHoop = true;
       score = score + 1;
+      io.emit("scoreUpdate", score);
     }
     if (fixb == "bronzeHoop" && fixa == "diver") {
       destroylist.push(contact.GetFixtureB().GetBody());
       respawnHoop = true;
       score = score + 1;
+      io.emit("scoreUpdate", score);
     }
   };
   world.SetContactListener(destroyListener);
@@ -359,12 +366,25 @@ app.use("/js", express.static(__dirname + "public/js"));
 app.use("/css", express.static(__dirname + "public/css"));
 app.use("/assets", express.static(__dirname + "public/assets"));
 
+var playersReady = 0;
+
 http.listen(8000, function () {
   console.log("server up on * 8000");
   io.on("connection", function (socket) {
     //Live player count
     connections.push(socket);
     socket.emit("playerCount", connections.length);
+
+    socket.on("init", () => {
+      playersReady++;
+      if (playersReady == connections.length) {
+        init();
+      } else {
+        console.log(
+          "Waiting on " + (connections.length - playersReady) + " players"
+        );
+      }
+    });
 
     socket.on("disconnect", () => {
       connections.pop();
@@ -465,5 +485,3 @@ http.listen(8000, function () {
     });
   });
 });
-
-init();

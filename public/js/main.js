@@ -162,6 +162,27 @@ socket.on("playerCount", (playerCount) => {
     "Players: " + playerCount;
 });
 
+socket.on("livesUpdate", (lives) => {
+  document.getElementById("lives").innerHTML = "Lives: " + lives;
+});
+
+socket.on("scoreUpdate", (score) => {
+  document.getElementById("score").innerHTML = "Score: " + score;
+});
+
+/**
+ * Start game loop
+ */
+
+function startGame() {
+  socket.emit("init");
+}
+
+function playWindow() {
+  document.getElementById("splash").style.display = "none";
+  document.getElementById("easelcan").style.display = "block";
+}
+
 /**
  * Easel Helper Functions
  */
